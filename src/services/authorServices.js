@@ -3,6 +3,7 @@ const responseCode = require("../utils/response-code");
 const responseMessage = require("../utils/response-message");
 const author = require("../models/author");
 const Bcrypt =require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const createAuthorService = async function (authorData) {
   try {
@@ -19,4 +20,21 @@ const createAuthorService = async function (authorData) {
   }
 };
 
-module.exports = { createAuthorService };
+
+const authorLoginService = async function(loginData){
+ try {
+   const {email,password}= loginData;
+   const foundData = await author.findOne({email});
+  const isvalid = Bcrypt.compareSync(password , foundData.password);
+  if(isvalid){
+    const token = jwt.sign({id:foundData._id},"my-application");
+    return Util.responseFormat({code:responseCode.SUCCESS,msg:responseMessage[responseCode.SUCCESS],data:token})
+  }else{
+     return Util.responseFormat({code:responseCode.AUTHENTICATION_FAILED,msg:responseMessage[responseCode.AUTHENTICATION_FAILED],data:{}});
+  }
+ } catch (error) {
+  return Util.responseFormat({ code: responseCode.INTERNAL_SERVER_ERROR, msg: responseMessage[responseCode.INTERNAL_SERVER_ERROR], data: {},})
+ }
+}
+
+module.exports = { createAuthorService, authorLoginService};
