@@ -29,16 +29,6 @@ const loginValidation = async function (req, res, next) {
       );
     } else {
       req.body = data.value;
-      const { email } = req.body;
-      const foundData = await author.findOne({ email });
-      if (!foundData)
-        res.send(
-          Util.response({
-            code: responseCode.EMAIL_DOES_NOT_EXITS,
-            msg: responseMessage[responseCode.EMAIL_DOES_NOT_EXITS],
-            data: {},
-          })
-        );
       next();
     }
   } catch (error) {

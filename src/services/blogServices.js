@@ -5,11 +5,13 @@ const blog = require("../models/blog");
 const moment = require("moment");
 const mongoose = require("mongoose");
 
+// ------------------------------------------------🔥Create Blog Service🔥-------------------------------------------
+
 const createBlogService = async function (blogData) {
   try {
     const { title, body, authorId, tags, category, subcategory, isPublished } =
       blogData;
-    blogData.publishedAt = moment().format("MMMM Do YYYY, h:mm:ss a");
+   blogData.publishedAt = moment().format("MMMM Do YYYY, h:mm:ss a");
     const createdBlog = await blog.create(blogData);
     return Util.responseFormat({
       code: responseCode.SUCCESS,
@@ -25,6 +27,7 @@ const createBlogService = async function (blogData) {
   }
 };
 
+// ------------------------------------------------🔥get all Blog Service🔥-------------------------------------------
 const getAllBlogsService = async function (queryData) {
   try {
     if (Object.keys(queryData).length == 0) {
@@ -57,7 +60,6 @@ const getAllBlogsService = async function (queryData) {
       if (subcategory) query.subcategory = subcategory;
       query.isDeleted = false;
       query.isPublished = true;
-      console.log(query);
       const filteredData = await blog.find(query);
       if (filteredData.length == 0)
         return Util.responseFormat({
@@ -79,6 +81,7 @@ const getAllBlogsService = async function (queryData) {
   }
 };
 
+// ------------------------------------------------🔥Update Blog Service🔥-------------------------------------------
 const updateBlogService = async function (
   requestId,
   requestData,
@@ -127,6 +130,8 @@ const updateBlogService = async function (
   }
 };
 
+// ------------------------------------------------🔥Delete Blog Service🔥-------------------------------------------
+
 const deleteBlogService = async function ({ blogId }, req) {
   try {
     const authorTokenId = req.authorTokenId;
@@ -174,8 +179,14 @@ const deleteBlogService = async function ({ blogId }, req) {
   }
 };
 
-const deleteBlogWithFilter = async function (queryData) {
+// ------------------------------------------------🔥Delete Blog with filter service🔥-------------------------------------------
+
+
+
+const deleteBlogWithFilter = async function (req) {
   try {
+    const queryData = req.query;
+    const authorTokenId = req.tokenAuthorId;
     if (Object.keys(queryData).length == 0)
       return Util.responseFormat({
         code: responseCode.Empty_filter_data,
@@ -199,20 +210,20 @@ const deleteBlogWithFilter = async function (queryData) {
     if (isPublished) {
       fliterObject.isPublished = isPublished;
     }
-    console.log(fliterObject);
-    const filterResult = await blog.deleteOne(fliterObject);
-    console.log(filterResult);
-    if (filterResult.deletedCount == 0)
-      return Util.responseFormat({
-        code: responseCode.NO_BLOG_FOUND,
-        msg: responseMessage[responseCode.NO_BLOG_FOUND],
-        data: {},
-      });
-    return Util.responseFormat({
-      code: responseCode.SUCCESS,
-      msg: responseMessage[responseCode.SUCCESS],
-      data: filterResult,
-    });
+
+   fliterObject.authorId = authorTokenId;
+   const blogs = await blog.find(fliterObject);
+    if(blogs.length==0){
+     return Util.responseFormat({code:responseCode.NO_BLOG_FOUND,msg:responseMessage[responseCode.NO_BLOG_FOUND],data:{}});
+    }
+
+    for(let blog of blogs){
+      if(blog.authorId.toString() !== authorTokenId.toString()){
+        return Util.responseFormat({code:responseCode.NOT_AUTHORIZED,msg:responseMessage[responseCode.NOT_AUTHORIZED],data:{}});
+      }
+    }
+  const updateResult = await blog.updateMany(fliterObject,{$set:{isDeleted:true}});
+return Util.responseFormat({code:responseCode.SUCCESS,msg:responseMessage[responseCode.SUCCESS]})
   } catch (error) {
     return Util.responseFormat({
       code: responseCode.INTERNAL_SERVER_ERROR,

@@ -27,7 +27,7 @@ const getAllBlogs = async function(req,res){
 
 //-------------------------------------------------------🔥UPDATE BLOG SERVICE🔥------------------------------------------------
 
-const updateBlog =async function(req,res){
+const updateBlog = async function(req,res){
   try {
     const updatedBlog = await blogService.updateBlogService(req.params,req.body,req.tokenAuthorId);
     res.send(updatedBlog);
@@ -52,8 +52,8 @@ const deleteBlog = async function(req,res){
 
 const deleteBlogByFilter = async function(req,res){
    try {
-   const answer= await blogService.deleteBlogWithFilter(req.query);
-   res.send(answer);
+   const deltedData= await blogService.deleteBlogWithFilter(req);
+   res.send(deltedData);
    } catch (error) {
     res.send(Util.response({code:responseCode.INTERNAL_SERVER_ERROR,msg:responseMessage[responseCode.INTERNAL_SERVER_ERROR],data:{}})); 
    }

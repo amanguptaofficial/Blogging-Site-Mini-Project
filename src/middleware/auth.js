@@ -27,8 +27,7 @@ const checkAuthentication = async function (req, res, next) {
             })
           );
         else {
-          const tokenAuthorId = token.id;
-          req.tokenAuthorId = tokenAuthorId;
+        req.tokenAuthorId = token.id;
           next();
         }
       });
