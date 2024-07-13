@@ -5,6 +5,8 @@ const responseMessage = require("../utils/response-message")
 const mongoose = require("mongoose");
 const blog = require("../models/blog");
 
+
+
 // ------------------------------------------🔥update Blog Schema🔥------------------------------------------------------- 
 const updateSchema = Joi.object().keys({
         title:Joi.string().regex(/[a-zA-Z0-9?]+/).message("title contains only the character").trim().lowercase(),
@@ -14,6 +16,8 @@ const updateSchema = Joi.object().keys({
         isPublished:Joi.boolean()
 })
 
+
+
 // ---------------------------------------🔥Update blog validation middleware🔥-------------------------------------------------------
 
 const checkBlogIdExits = async function(req,res,next){
@@ -21,18 +25,9 @@ const checkBlogIdExits = async function(req,res,next){
   const result = updateSchema.validate(req.body);
      if(result.error) res.send(Util.response({code:responseCode.BAD_REQUEST,msg:result.error.message,data:{}}));
      req.body =result.value;
-    const {blogId} = req.params;
-    if(!mongoose.Types.ObjectId.isValid(blogId)){
-      res.send(Util.response({code:responseCode.INCORRECT_BLOG_ID,msg:responseMessage[responseCode.INCORRECT_BLOG_ID],data:{}}));
-    }else{
-     const blogData  = await blog.findById(blogId); 
-     if(!blogData) res.send(Util.responseFormat({code:responseCode.NO_BLOG_FOUND,msg:responseMessage[responseCode.NO_BLOG_FOUND],data:{}}));
-     if(blogData.isDeleted == true) res.send({code:responseCode.NO_BLOG_FOUND,msg:responseMessage[responseCode.NO_BLOG_FOUND],data:{}})   
-       next(); 
-    }
+      next(); 
   } catch (error) {
     res.send(Util.response({code:responseCode.INTERNAL_SERVER_ERROR,msg:responseMessage[responseCode.INTERNAL_SERVER_ERROR],data:{}}));
-
   }
 }
 

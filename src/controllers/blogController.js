@@ -7,7 +7,7 @@ const blogService = require("../services/blogServices");
 
 const createBlog = async function(req,res){
 try { 
-  const createdBlog = await blogService.createBlogService(req.body);
+  const createdBlog = await blogService.createBlogService(req.body,req.tokenAuthorId);
   res.send(createdBlog);
 } catch (error) {
   res.send(Util.response({code:responseCode.INTERNAL_SERVER_ERROR,msg:responseMessage[responseCode.INTERNAL_SERVER_ERROR],data:{}}));
@@ -18,7 +18,7 @@ try {
 
 const getAllBlogs = async function(req,res){
    try {
-    const fetchedBlogs=  await blogService.getAllBlogsService(req.query);
+    const fetchedBlogs=  await blogService.getAllBlogsService(req.query, req.tokenAuthorId);
     res.send(fetchedBlogs);
    } catch (error) {
     res.send(Util.response({code:responseCode.INTERNAL_SERVER_ERROR,msg:responseMessage[responseCode.INTERNAL_SERVER_ERROR],data:{}}));

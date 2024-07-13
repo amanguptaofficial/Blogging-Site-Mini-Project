@@ -10,13 +10,17 @@ const {checkAuthentication,checkAuthrization}= require("../middleware/auth");
 
 //-----------------------------------------------🔥All routes🔥--------------------------------------------------------------
 
+//author routes
 router.post("/authors",validateAuthor, authorController.createAuthor);
+router.post("/login", loginValidation, authorController.authorLogin);
+
+//blog route
 router.post("/blogs",checkAuthentication,validateBlog,blogController.createBlog);
 router.get("/blogs",checkAuthentication,blogController.getAllBlogs);
 router.put("/blogs/:blogId",checkAuthentication,checkBlogIdExits, blogController.updateBlog);
 router.delete("/blogs/:blogId",checkAuthentication,blogController.deleteBlog);
 router.delete("/blogs",checkAuthentication,blogController.deleteBlogByFilter);
-router.post("/login", loginValidation, authorController.authorLogin);
+
 
 
 

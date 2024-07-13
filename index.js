@@ -7,9 +7,11 @@ const router = require("./src/routes/route");
 const dotenv = require("dotenv");
 dotenv.config();
 
+
 //Using inbuilt Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 
 // here we are connect our mongodb.
 mongoose

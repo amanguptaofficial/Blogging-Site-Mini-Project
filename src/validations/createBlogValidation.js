@@ -18,8 +18,7 @@ const blogSchema = Joi.object().keys({
    }),
    tags: Joi.array().items(Joi.string().regex(/[a-zA-Z ]+/).message("tags contains only the character").trim().lowercase()),
    category: Joi.string().regex(/[a-zA-Z ]+/).message("category contains only the character").required().trim().lowercase(),
-   subcategory: Joi.array().items(Joi.string().regex(/[a-zA-Z ]+/).message("subcategory contains only the character").trim().lowercase()),
-   isPublished: Joi.boolean().default(false)
+   subcategory: Joi.array().items(Joi.string().regex(/[a-zA-Z ]+/).message("subcategory contains only the character").trim().lowercase())
 })
 
 
