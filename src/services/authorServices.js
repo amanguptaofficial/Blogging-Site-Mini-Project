@@ -29,13 +29,11 @@ const authorLoginService = async function(loginData){
    const {email,password}= loginData;
    const foundData = await author.findOne({email});
    if (!foundData)
-    res.send(
-      Util.response({
+    return Util.response({
         code: responseCode.EMAIL_DOES_NOT_EXITS,
         msg: responseMessage[responseCode.EMAIL_DOES_NOT_EXITS],
         data: {},
       })
-    );
   const isvalid = Bcrypt.compareSync(password , foundData.password);
   if(isvalid){
     const token = jwt.sign({id:foundData._id},"my-application");
